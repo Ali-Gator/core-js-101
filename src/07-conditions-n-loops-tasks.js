@@ -308,7 +308,9 @@ function isCreditCardNumber(ccn) {
   function func(sum, d, n) {
     return +sum + ((n % 2) ? [0, 2, 4, 6, 8, 1, 3, 5, 7, 9][+d] : +d);
   }
-  return /^\d+$/.test(ccn) && (ccn.toString().split('')
+
+  return /^\d+$/.test(ccn) && (ccn.toString()
+    .split('')
     .reverse()
     .reduce(func, 0)) % 10 === 0;
 }
@@ -327,8 +329,14 @@ function isCreditCardNumber(ccn) {
  *   10000 ( 1+0+0+0+0 = 1 ) => 1
  *   165536 (1+6+5+5+3+6 = 26,  2+6 = 8) => 8
  */
-function getDigitalRoot(/* num */) {
-  throw new Error('Not implemented');
+function getDigitalRoot(num) {
+  const res = num.toString()
+    .split('')
+    .reduce((acc, el) => acc + +el, 0);
+  if (res < 10) {
+    return res;
+  }
+  return getDigitalRoot(res);
 }
 
 
@@ -353,8 +361,25 @@ function getDigitalRoot(/* num */) {
  *   '{)' = false
  *   '{[(<{[]}>)]}' = true
  */
-function isBracketsBalanced(/* str */) {
-  throw new Error('Not implemented');
+function isBracketsBalanced(str) {
+  const map = {
+    '(': ')',
+    '[': ']',
+    '{': '}',
+    '<': '>',
+  };
+  const closing = Object.values(map);
+  const stack = [];
+
+  // eslint-disable-next-line no-restricted-syntax
+  for (const char of str) {
+    if (map[char]) {
+      stack.push(char);
+    } else if (closing.includes(char) && char !== map[stack.pop()]) {
+      return false;
+    }
+  }
+  return !stack.length;
 }
 
 
@@ -378,8 +403,8 @@ function isBracketsBalanced(/* str */) {
  *    365, 4  => '11231'
  *    365, 10 => '365'
  */
-function toNaryString(/* num, n */) {
-  throw new Error('Not implemented');
+function toNaryString(num, n) {
+  return num.toString(n);
 }
 
 
@@ -395,8 +420,30 @@ function toNaryString(/* num, n */) {
  *   ['/web/assets/style.css', '/.bin/mocha',  '/read.me'] => '/'
  *   ['/web/favicon.ico', '/web-scripts/dump', '/verbalizer/logs'] => '/'
  */
-function getCommonDirectoryPath(/* pathes */) {
-  throw new Error('Not implemented');
+function getCommonDirectoryPath(pathes) {
+  let count;
+  let res = '';
+  for (let i = 0; i < pathes[0].length; i += 1) {
+    const char = pathes[0][i];
+    count = 1;
+    for (let j = 1; j < pathes.length; j += 1) {
+      if (pathes[j][i] === char) {
+        count += 1;
+      } else {
+        if (res.match(/[/].+[/]/) !== null) {
+          return res.match(/[/].+[/]/)[0];
+        }
+        if (res.length === 0) {
+          return '';
+        }
+        return res.match(/[/]/)[0];
+      }
+    }
+    if (count === pathes.length) {
+      res += char;
+    }
+  }
+  return res;
 }
 
 
@@ -418,8 +465,21 @@ function getCommonDirectoryPath(/* pathes */) {
  *                         [ 6 ]]
  *
  */
-function getMatrixProduct(/* m1, m2 */) {
-  throw new Error('Not implemented');
+function getMatrixProduct(m1, m2) {
+  const resMatr = [];
+  for (let i = 0; i < m1.length; i += 1) {
+    resMatr[i] = [];
+  }
+  for (let k = 0; k < m2[0].length; k += 1) {
+    for (let i = 0; i < m1.length; i += 1) {
+      let number = 0;
+      for (let j = 0; j < m2.length; j += 1) {
+        number += m1[i][j] * m2[j][k];
+      }
+      resMatr[i][k] = number;
+    }
+  }
+  return resMatr;
 }
 
 
@@ -453,8 +513,50 @@ function getMatrixProduct(/* m1, m2 */) {
  *    [    ,   ,    ]]
  *
  */
-function evaluateTicTacToePosition(/* position */) {
-  throw new Error('Not implemented');
+function evaluateTicTacToePosition(position) {
+  if ((position[0][0] === position[0][1] && position[0][0] === position[0][2])) {
+    if (position[0][0] !== undefined) {
+      return position[0][0];
+    }
+  }
+  if ((position[1][0] === position[1][1] && position[1][0] === position[1][2])) {
+    if (position[1][0] !== undefined) {
+      return position[1][0];
+    }
+  }
+  if ((position[2][0] === position[2][1] && position[2][0] === position[2][2])) {
+    if (position[2][0] !== undefined) {
+      return position[2][0];
+    }
+  }
+
+  if ((position[0][0] === position[1][0] && position[0][0] === position[2][0])) {
+    if (position[0][0] !== undefined) {
+      return position[0][0];
+    }
+  }
+  if ((position[0][1] === position[1][1] && position[0][1] === position[2][1])) {
+    if (position[0][1] !== undefined) {
+      return position[0][1];
+    }
+  }
+  if ((position[0][2] === position[1][2] && position[0][2] === position[2][2])) {
+    if (position[0][2] !== undefined) {
+      return position[0][2];
+    }
+  }
+
+  if ((position[0][0] === position[1][1] && position[0][0] === position[2][2])) {
+    if (position[0][0] !== undefined) {
+      return position[0][0];
+    }
+  }
+  if ((position[0][2] === position[1][1] && position[0][2] === position[2][0])) {
+    if (position[0][2] !== undefined) {
+      return position[0][2];
+    }
+  }
+  return undefined;
 }
 
 
